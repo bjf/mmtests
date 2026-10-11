@@ -29,7 +29,8 @@ WEB_LOCATION=`echo $WEB_LOCATION | sed -e "s/vX.X/v$MAJOR.x/"`
 
 ###SHELLPACK build_start perfbuild-${VERSION}/tools/perf
 sed -i -e s/-DHAVE_LIBBFD_SUPPORT// Makefile.config
-###SHELLPACK make NO_LIBBFD=1 NO_LIBTRACEEVENT=1 prefix=$SHELLPACK_SOURCES/perfbuild-${VERSION}-installed
-###SHELLPACK make NO_LIBBFD=1 NO_LIBTRACEEVENT=1 prefix=$SHELLPACK_SOURCES/perfbuild-${VERSION}-installed install
+sed -i -e 's/-Werror -Wall/-Wall/' ../lib/bpf/Makefile
+###SHELLPACK make NO_LIBBFD=1 NO_LIBTRACEEVENT=1 WERROR=0 prefix=$SHELLPACK_SOURCES/perfbuild-${VERSION}-installed
+###SHELLPACK make NO_LIBBFD=1 NO_LIBTRACEEVENT=1 WERROR=0 prefix=$SHELLPACK_SOURCES/perfbuild-${VERSION}-installed install
 
 exit $SHELLPACK_SUCCESS
