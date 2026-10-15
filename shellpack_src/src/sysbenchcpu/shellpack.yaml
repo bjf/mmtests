@@ -4,9 +4,10 @@ metrics:
   - events/sec
 
 summarise: Multiops
+preferhigher: true
 PlotXaxis: Events/Second
 PlotType: operation-candlesticks
 
-txn/sec:
+events/sec:
   title: Events/Second
   units: OPS_PER_SECOND
