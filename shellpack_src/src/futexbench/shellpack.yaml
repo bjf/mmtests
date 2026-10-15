@@ -16,10 +16,12 @@ PlotType: operation-candlesticks
 hash:
   title: Hash
   units: OPS_PER_SECOND
+  preferhigher: true
 
 lock-pi:
   title: Lock-PI
   units: OPS_PER_SECOND
+  preferhigher: true
 
 requeue:
   title: Requeue
@@ -40,3 +42,4 @@ wake-parallel:
 wait:
   title: wait
   units: KOPS_PER_SECOND
+  preferhigher: true
