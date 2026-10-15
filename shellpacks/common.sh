@@ -24,7 +24,16 @@ NUM_LOGICAL_CPUS=`ls -d /sys/devices/system/cpu/cpu[0-9]* | wc -l`
 NUM_CORES=$((NUM_LOGICAL_CORES/SMT_WEIGHT))
 NUM_LLCS=`grep . /sys/devices/system/cpu/cpu*/cache/index$LLC_INDEX/shared_cpu_map | awk -F : '{print $NF}' | sort -u | wc -l`
 [ "$NUM_LLCS" = "0" ] && NUMLLCS=1
-NUM_NODES=`grep ^Node /proc/zoneinfo | awk '{print $2}' | sort | uniq | wc -l`
+# Only nodes with CPUs: a node with none (a GPU's, a reserved one) has no
+# CPUs to weigh or bind to, and counting it shrinks NODE_WEIGHT.
+NUM_NODES=0
+if [ -e /sys/devices/system/node/has_cpu ]; then
+	for NODE_RANGE in `tr ',' ' ' < /sys/devices/system/node/has_cpu`; do
+		NUM_NODES=$((NUM_NODES+${NODE_RANGE#*-}-${NODE_RANGE%-*}+1))
+	done
+	unset NODE_RANGE
+fi
+[ $NUM_NODES -eq 0 ] && NUM_NODES=`grep ^Node /proc/zoneinfo | awk '{print $2}' | sort | uniq | wc -l`
 
 LLC_WEIGHT=$((NUM_LOGICAL_CPUS/NUM_LLCS))
 NODE_WEIGHT=$((NUM_LOGICAL_CPUS/NUM_NODES))
