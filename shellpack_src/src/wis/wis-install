@@ -17,6 +17,9 @@ cat $SHELLPACK_TEMP/align-alloc.patch | patch -p1
 sed -i -e 's/tmpfs/tmp/' tests/fallocate1.c
 sed -i -e 's/\/tmp\/willitscale/willitscale/' tests/*.c
 sed -i -e 's/\/tmp\/shared_area/shared_area/' main.c
+# GCC 15 at -O2 removes a malloc whose memory is only freed, and the
+# free, so malloc1 and malloc2 would loop without counting anything.
+sed -i -e '/^CFLAGS+=/s/$/ -fno-builtin-malloc -fno-builtin-free/' Makefile
 ###SHELLPACK make
 
 echo will-it-scale installed successfully
