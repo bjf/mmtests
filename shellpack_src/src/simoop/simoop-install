@@ -9,7 +9,6 @@ MIRROR_LOCATION="$WEBROOT/simoop/"
 ###SHELLPACK git_fetch simoop-${VERSION}.tar.gz simoop-${VERSION}-installed
 
 ###SHELLPACK build_start simoop-${VERSION}-installed
-###SHELLPACK self_extract fix-overrun.patch
 ###SHELLPACK make
 
 echo simoop installed successfully
