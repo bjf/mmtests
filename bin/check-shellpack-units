@@ -1,0 +1,90 @@
+#!/bin/bash
+# Check that every units: value in the shellpack YAML files names a unit
+# that DataTypes.pm defines, so lookup-unit-label prints a real label for it.
+# Prints each problem as file:line and exits 1 if there are any.
+
+DIRNAME=`dirname $0`
+SCRIPTDIR=`cd "$DIRNAME" && pwd`
+TOPDIR=`cd "$SCRIPTDIR/.." && pwd`
+LOOKUP=$SCRIPTDIR/lookup-unit-label
+
+if [ ! -x $LOOKUP ]; then
+	echo "ERROR: $LOOKUP is missing or not executable"
+	exit 1
+fi
+
+cd $TOPDIR || exit 1
+FOUND=`find -L shellpack_src -name '*.yaml'`
+if [ $? -ne 0 ]; then
+	echo "ERROR: could not list the YAML files under $TOPDIR/shellpack_src"
+	exit 1
+fi
+FILES=
+for FILE in `echo "$FOUND" | sort`; do
+	[ -d $FILE ] && continue
+	if [ ! -f $FILE ] || [ ! -r $FILE ]; then
+		echo "ERROR: cannot read $FILE"
+		exit 1
+	fi
+	FILES="$FILES $FILE"
+done
+if [ "$FILES" = "" ]; then
+	echo "ERROR: no YAML files found under $TOPDIR/shellpack_src"
+	exit 1
+fi
+
+# grep exits 1 when nothing matches and 2 on a read error
+UNITLINES=`grep -n -H -E '^[[:space:]]*units:' $FILES`
+if [ $? -gt 1 ]; then
+	echo "ERROR: could not read the YAML files under $TOPDIR/shellpack_src"
+	exit 1
+fi
+
+CHECKED=0
+FAILED=0
+while IFS= read -r LINE; do
+	[ "$LINE" = "" ] && continue
+	FILE=`echo "$LINE" | cut -d: -f1`
+	LINENUM=`echo "$LINE" | cut -d: -f2`
+	# Value after "units:", without surrounding whitespace or a comment
+	VALUE=`echo "$LINE" | cut -d: -f3- | sed -e 's/^[[:space:]]*units:[[:space:]]*//' -e 's/[[:space:]]#.*//' -e 's/[[:space:]]*$//'`
+	# One pair of matching quotes may surround the name
+	case "$VALUE" in
+	\"*\")
+		VALUE=${VALUE#\"}
+		VALUE=${VALUE%\"}
+		;;
+	\'*\')
+		VALUE=${VALUE#\'}
+		VALUE=${VALUE%\'}
+		;;
+	esac
+	CHECKED=$((CHECKED+1))
+
+	if ! echo "$VALUE" | grep -q -E '^[A-Za-z0-9_]+$'; then
+		echo "$FILE:$LINENUM: units '$VALUE' is not a valid unit name"
+		FAILED=$((FAILED+1))
+		continue
+	fi
+
+	LABEL=`$LOOKUP $VALUE 2>&1`
+	RET=$?
+	if [ $RET -ne 0 ] || [ "$LABEL" = "" ]; then
+		echo "ERROR: $LOOKUP $VALUE failed (exit $RET): $LABEL"
+		exit 1
+	fi
+	case "$LABEL" in
+	"Unknown unit"*)
+		echo "$FILE:$LINENUM: units $VALUE has no label in DataTypes.pm"
+		FAILED=$((FAILED+1))
+		;;
+	esac
+done <<< "$UNITLINES"
+
+if [ $CHECKED -eq 0 ]; then
+	echo "ERROR: no units: values found under $TOPDIR/shellpack_src"
+	exit 1
+fi
+
+echo "Checked $CHECKED units: values, $FAILED with no label"
+[ $FAILED -eq 0 ]
