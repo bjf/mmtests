@@ -1755,7 +1755,7 @@ function cluster_replicate_packages() {
 			$SLURM_RUN_NODES mkdir -p $OMPI_TMPDIR &>/dev/null
 		fi
 		if [ "$TMPDIR" != "" ]; then
-			$SLURM_RUN_NODES mkdir -p $TMPDIR &>/dev/nuull
+			$SLURM_RUN_NODES mkdir -p $TMPDIR &>/dev/null
 		fi
 		for PACKAGE in `cat /tmp/packages.$MMTESTS_SESSION_ID`; do
 			echo Installing $PACKAGE on cluster
