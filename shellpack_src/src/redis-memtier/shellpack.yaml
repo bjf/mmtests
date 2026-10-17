@@ -19,12 +19,12 @@ ops/sec:
 
 hits/sec:
   title: Hits/sec
-  units: OPS_PER_SEC
+  units: OPS_PER_SECOND
   preferhigher: true
 
 misses/sec:
   title: Misses/sec
-  units: OPS_PER_SEC
+  units: OPS_PER_SECOND
   preferhigher: true
 
 kb/sec:
