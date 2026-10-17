@@ -366,13 +366,13 @@ EOC
 		my $selffile = @details[0];
 		shift @details;
 		print <<EOC
-LINESTART=`grep -n "==== BEGIN $selffile" \$0 | tail -1 | awk -F : '{print \$1}'`
-LINEEND=`grep -n "==== END $selffile" \$0 | tail -1 | awk -F : '{print \$1}'`
-if [ "\$LINEEND" = "" ]; then
-	LINECOUNT=`wc -l \$0 | awk '{print \$1}'`
-fi
+LINESTART=`grep -n -x -F "==== BEGIN $selffile ====" \$0 | tail -1 | awk -F : '{print \$1}'`
+LINEEND=`grep -n -x -F "==== END $selffile ====" \$0 | tail -1 | awk -F : '{print \$1}'`
 if [ "\$LINESTART" = "" ]; then
 	die Failed to find start of file $selffile
+fi
+if [ "\$LINEEND" = "" ] || [ \$LINEEND -le \$LINESTART ]; then
+	die Failed to find end of file $selffile
 fi
 echo Extracting \$SHELLPACK_TEMP/$selffile
 sed -n \$((LINESTART+1)),\$((LINEEND-1))p \$0 > \$SHELLPACK_TEMP/$selffile
