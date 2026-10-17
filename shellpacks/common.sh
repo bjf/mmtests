@@ -196,9 +196,11 @@ function wait_on_pid_file_create()
 
 	echo Waiting on pidfile $PIDFILE to be created
 	while [ ! -e $PIDFILE ]; do
+		[ $ATTEMPT -ge $TIMEOUT ] && return 1
 		sleep 1
-		[ $(($ATTEMPT)) -gt $TIMEOUT ] || break
+		ATTEMPT=$((ATTEMPT+1))
 	done
+	return 0
 }
 
 function wait_on_pid_file() {
