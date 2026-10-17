@@ -19,4 +19,4 @@ remote:
 
 local_v_total:
   title: Percentage Placed Local CPU
-  units: OPS_PERCENTAGE
+  units: PERCENTAGE
