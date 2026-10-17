@@ -119,6 +119,7 @@ EOC
 	} elsif ($command eq "parseargBegin") {
 		print <<EOC;
 # Basic argument parser
+VERSION=
 TASKSET_SERVER=
 TASKSET_CLIENT=
 TASKSET_ALL=
