@@ -106,22 +106,17 @@ function start_with_latency_monitor()
 {
 	local _monitor
 	local _pidfile
+	local _fd
 
 	_monitor=$1
 	_pidfile=$MONITOR_DIR/monitor.pids
 
-	rm -f /tmp/monitor-{1,2}.$$.pid
-	($EXPECT_UNBUFFER $DISCOVERED_SCRIPT 2>/dev/null & echo $! > /tmp/monitor-1.$$.pid ) | \
-		$SCRIPTDIR/monitors/latency-output /tmp/monitor-2.$$.pid > ${MONITOR_LOG} &
-
-	wait_on_pid_file_create /tmp/monitor-1.$$.pid 10
-	PID1=`cat /tmp/monitor-1.$$.pid`
-	rm -f /tmp/monitor-1.$$.pid
+	exec {_fd}> >(exec $SCRIPTDIR/monitors/latency-output > ${MONITOR_LOG})
+	PID2=$!
+	$EXPECT_UNBUFFER $DISCOVERED_SCRIPT 2>/dev/null >&$_fd &
+	PID1=$!
+	exec {_fd}>&-
 	echo ${MONITOR_LOG} > $MONITOR_DIR/monitor.$PID1.compress
-
-	wait_on_pid_file_create /tmp/monitor-2.$$.pid 10
-	PID2=`cat /tmp/monitor-2.$$.pid 2> /dev/null`
-	rm -f /tmp/monitor-2.$$.pid
 
 	echo $PID2 >> $_pidfile
 	echo $PID1 >> $_pidfile
