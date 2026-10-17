@@ -76,8 +76,19 @@ Some of the universal ones are:
 * `AUTO_PACKAGE_INSTALL`:
 	Whether packages necessary for building or running benchmarks
 	should be automatically installed, without asking any confirmation
-	(takes a `yes` or a `no`). Creating a file called `.mmtests-auto-package-install`
-	and putting it in `/` would be equivalent of having this set to `yes`.
+	(takes a `yes` or a `no`). Creating an empty file called
+	`$HOME/.mmtests-auto-package-install`, in the home directory of the
+	user running MMTests (normally `/root` when running as root), is
+	equivalent to setting this to `yes`. When neither this option is
+	`yes` nor that file exists, MMTests asks before installing a missing
+	package, unless `$HOME/.mmtests-never-auto-package-install` exists.
+	Answering `yes` creates the first file and answering `never` creates
+	the second, which only stops MMTests asking: packages are still
+	installed, and the package manager asks for its own confirmation.
+* `AUTO_PACKAGE_DOWNGRADE`:
+	Whether a package that fails to install may be installed again
+	allowing a downgrade (takes a `yes` or a `no`; SUSE only). Creating
+	`$HOME/.mmtests-auto-package-downgrade` is equivalent to `yes`.
 * `MMTESTS_NUMA_POLICY`:
 	Whether `numad` or `numactl` should be used for deciding (typically,
 	for restricting) on what CPUs and/or NUMA nodes the benchmark will run.
