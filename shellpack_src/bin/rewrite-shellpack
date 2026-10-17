@@ -589,7 +589,6 @@ EOC
 		print <<EOC
 for NR_THREADS in `generate-stride-range --min $min_thread --max $max_thread --stride-large --cutoff=\$MMTESTS_THREAD_CUTOFF`; do
 	mmtests_activity nr_threads \$NR_THREADS
-	mmtests_activity nr_threads \$NR_THREADS
 EOC
 	} elsif ($command eq "threads_huge_stride_begin") {
 		my ($min_thread, $max_thread) = @details;
