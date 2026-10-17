@@ -529,7 +529,7 @@ function git_fetch() {
 	fi
 
 	if [ $COMMIT = "0" ]; then
-		COMMIT=master
+		COMMIT=HEAD
 	fi
 
 	install-depends git-core
@@ -538,7 +538,11 @@ function git_fetch() {
 		echo "$P: Fetching from mirror $MIRROR"
 		wget -q $WGET_SHOW_PROGRESS -O $OUTPUT $MIRROR
 		RET=$?
-		[ $RET -eq 0 ] && export MMTESTS_CREATE_MIRROR=no
+		if [ $RET -eq 0 ]; then
+			export MMTESTS_CREATE_MIRROR=no
+		else
+			rm -f $OUTPUT
+		fi
 	fi
 
 	if [ "$MMTESTS_IGNORE_MIRROR" = "yes" ] || [ "$RET" -ne 0 ]; then
@@ -554,12 +558,21 @@ function git_fetch() {
 		fi
 		cd $TREE || die "$P: Could not cd $TREE"
 		if [ $(git_commit_exists $COMMIT) != 0 ]; then
-			echo "$P: $COMMIT is not a tag/commit. Fetching master"
-			COMMIT=master
+			echo "$P: $COMMIT is not a tag/commit. Fetching the default branch"
+			COMMIT=HEAD
 		fi
-		git checkout $COMMIT
+		git checkout $COMMIT || die "$P: Could not check out $COMMIT"
 		echo Creating $OUTPUT
-		git archive --format=tar --prefix=$TREE/ $COMMIT | gzip -c > $OUTPUT
+		rm -f $OUTPUT.tmp
+		(set -o pipefail; git archive --format=tar --prefix=$TREE/ $COMMIT | gzip -c > $OUTPUT.tmp)
+		if [ $? -ne 0 ]; then
+			rm -f $OUTPUT.tmp
+			die "$P: Could not archive $COMMIT"
+		fi
+		if ! mv $OUTPUT.tmp $OUTPUT; then
+			rm -f $OUTPUT.tmp
+			die "$P: Could not create $OUTPUT"
+		fi
 		cd -
 	fi
 
