@@ -50,20 +50,20 @@ JOPS-100000us:
 
 pctMax-10000us:
   title: Percentage JOPS Below 10000us
-  units: OPS_PERCENTAGE
+  units: PERCENTAGE
 
 pctMax-25000us:
   title: Percentage JOPS Below 25000us
-  units: OPS_PERCENTAGE
+  units: PERCENTAGE
 
 pctMax-50000us:
   title: Percentage JOPS Below 50000us
-  units: OPS_PERCENTAGE
+  units: PERCENTAGE
 
 pctMax-75000us:
   title: Percentage JOPS Below 75000us
-  units: OPS_PERCENTAGE
+  units: PERCENTAGE
 
 pctMax-100000us:
   title: Percentage JOPS Below 100000us
-  units: OPS_PERCENTAGE
+  units: PERCENTAGE
