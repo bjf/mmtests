@@ -125,6 +125,21 @@ else
 	export LD_LIBRARY_PATH=$SHELLPACK_SOURCES/mariadbbuild-${MARIADB_VERSION}-installed/lib
 fi
 
+# Drop the test database and stop the server however the benchmark exits
+SYSBENCH_CLEANUP_DONE=no
+sysbench_cleanup() {
+	[ "$SYSBENCH_CLEANUP_DONE" = "yes" ] && return
+	SYSBENCH_CLEANUP_DONE=yes
+	trap - EXIT
+	if [ "$DBDRIVER" = "postgres" ]; then
+		$RUNDBUSER "$PSQL template1 -c 'DROP DATABASE pgtest;'"
+		$RUNDBUSER "$PSQL template1 -c 'DROP ROLE sbtest;'"
+	else
+		eval $MYSQLADMIN -f drop sbtest
+	fi
+	$SHELLPACK_INCLUDE/shellpack-bench-${DBDRIVER}build --stop
+}
+
 FIRST_TIME=yes
 SYSBENCH_OPTIONS="$MAX_TIME_COMMAND $MAX_TRANSACTIONS_COMMAND $SYSBENCH_DB_OPTIONS"
 OLTP_OPTIONS="--test=oltp $OLTP_TRANSTYPE \
@@ -139,6 +154,7 @@ OLTP_OPTIONS="--test=oltp $OLTP_TRANSTYPE \
 			--effective_cachesize $EFFECTIVE_CACHESIZE		\
 			--shared_buffers $SHARED_BUFFERS			\
 			--work_mem $WORK_MEM || die "Failed to get usable database installation"
+		trap sysbench_cleanup EXIT
 
 		echo Preparing database
 		if [ "$DBDRIVER" = "postgres" ]; then
@@ -203,6 +219,7 @@ else
 	eval $MYSQLADMIN -f drop sbtest
 fi
 $SHELLPACK_INCLUDE/shellpack-bench-${DBDRIVER}build --stop
+trap - EXIT
 
 echo sysbench successfully completed
 exit $SHELLPACK_SUCCESS
