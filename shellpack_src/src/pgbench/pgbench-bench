@@ -139,7 +139,7 @@ PGBENCH_CMD="pgbench -h $PGHOST -p $PGPORT -b $LOADSCRIPT -r $VACUUM_ARG -T $TOT
 		cat $LOGDIR_RESULTS/pgbench-$PGBENCH_CLIENTS.log
 		die "pgbench failed to execute"
 	fi
-	monitor_post_hook $LOGDIR_RESULTS $NR_THRADS
+	monitor_post_hook $LOGDIR_RESULTS $PGBENCH_CLIENTS
 	for FILE in `ls pgbench_log.*`; do
 		mv $FILE $LOGDIR_RESULTS/pgbench-transactions-$PGBENCH_CLIENTS.log
 		gzip -f $LOGDIR_RESULTS/pgbench-transactions-$PGBENCH_CLIENTS.log
