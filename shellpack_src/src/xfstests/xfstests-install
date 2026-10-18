@@ -1,6 +1,6 @@
 #!/bin/bash
 ###SHELLPACK preamble xfstests-install git
-GIT_LOCATION=git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+GIT_LOCATION=https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
 MIRROR_LOCATION="$WEBROOT/xfstests/"
 
 ###SHELLPACK parseargBegin
