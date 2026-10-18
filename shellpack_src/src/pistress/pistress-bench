@@ -1,7 +1,7 @@
 #!/bin/bash
 # pistress
 
-###SHELLPACK preamble pistress-bench v1.5
+###SHELLPACK preamble pistress-bench v2.9
 
 ###SHELLPACK parseargBegin
 ###SHELLPACK parseargInstall
