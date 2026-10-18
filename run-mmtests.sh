@@ -164,6 +164,15 @@ if [ -z "$RUNNAME" ]; then
 	exit -1
 fi
 
+# The runname names a directory under work/log that is removed recursively
+case "$RUNNAME" in
+.|..|*[!A-Za-z0-9._-]*)
+	echo "ERROR: Runname may only use the characters A-Z a-z 0-9 . _ - and may not be . or .."
+	usage
+	exit 1
+	;;
+esac
+
 # getopt was needed above; install util-linux now the arguments are valid
 install-depends util-linux
 
