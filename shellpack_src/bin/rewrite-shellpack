@@ -132,7 +132,7 @@ EOC
 
 		print_arg_case("-v", "VERSION");
 		print_arg_case("--serverside-command", "SERVERSIDE_COMMAND");
-		print_arg_case("--serverside_name", "SERVERSIDE_NAME");
+		print_arg_case("--serverside-name", "SERVERSIDE_NAME");
 	} elsif ($command eq "parseargInstall") {
 		print_flag_case("--install-only", "INSTALL_ONLY");
 		print_flag_case("--install-force", "INSTALL_FORCE");
