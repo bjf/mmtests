@@ -68,6 +68,17 @@ if [ "$GROUPNAME" = "" ]; then
 fi
 GROUPID=`grep ^$GROUPNAME: /etc/group | cut -d: -f3`
 
+# $POSTGRES_USER runs the installation, psql and run_background by their
+# absolute paths and keeps its data under $SHELLPACK_DATA, so it must be
+# able to search every directory above them. $HOME, which the fallback
+# below makes searchable, is root's under sudo and need not be one of them.
+for DIR in "$SHELLPACK_SOURCES" "$SHELLPACK_DATA" "$SHELLPACK_INCLUDE"; do
+	while [ -n "$DIR" ] && [ "$DIR" != "/" ] && [ "$DIR" != "." ]; do
+		chmod -- a+x "$DIR"
+		DIR=`dirname -- "$DIR"`
+	done
+done
+
 echo Initialising database
 PSQL="su -s /bin/bash $POSTGRES_USER -c"
 POSTGRES_DATADIR=$SHELLPACK_DATA/pgdata
