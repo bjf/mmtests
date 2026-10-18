@@ -258,9 +258,9 @@ case $FIO_TEST_TYPE in
 scaling)
 	DIR_NR=${#SHELLPACK_DATA_DIRS[*]}
 	DIRS=`echo ${SHELLPACK_DATA_DIRS[*]} | tr " " ":"`
-	monitor_pre_hook $LOGDIR_RESULTS $FIO_READWRITE
+	monitor_pre_hook $LOGDIR_RESULTS $FIO_TEST_TYPE
 	scaling_test
-	monitor_post_hook $LOGDIR_RESULTS $FIO_READWRITE
+	monitor_post_hook $LOGDIR_RESULTS $FIO_TEST_TYPE
 	;;
 ssd)
 	DIR_NR=${#SHELLPACK_DATA_DIRS[*]}
