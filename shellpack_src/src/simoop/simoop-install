@@ -1,6 +1,6 @@
 #!/bin/bash
 ###SHELLPACK preamble simoop-install 18929ada
-GIT_LOCATION=git://git.kernel.org/pub/scm/linux/kernel/git/mason/simoop.git
+GIT_LOCATION=https://git.kernel.org/pub/scm/linux/kernel/git/mason/simoop.git
 MIRROR_LOCATION="$WEBROOT/simoop/"
 
 ###SHELLPACK parseargBegin
