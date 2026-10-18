@@ -1,6 +1,6 @@
 #!/bin/bash
 ###SHELLPACK preamble rttestbuild-install v2.7
-GIT_LOCATION=git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+GIT_LOCATION=https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
 MIRROR_LOCATION="$WEBROOT/rttestbuild/"
 
 install-depends libnuma-devel
