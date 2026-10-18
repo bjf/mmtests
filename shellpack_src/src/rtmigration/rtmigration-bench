@@ -1,6 +1,6 @@
 #!/bin/bash
 # rt-migration
-###SHELLPACK preamble rtmigration-bench v1.5
+###SHELLPACK preamble rtmigration-bench v2.9
 
 CYCLICTEST_BACKGROUND=none
 
