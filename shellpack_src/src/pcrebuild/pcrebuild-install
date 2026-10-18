@@ -2,12 +2,13 @@
 # Perl Compatible RE installer for Apache httpd
 ###SHELLPACK preamble pcrebuild-install 8.43
 
-WEB_LOCATION=ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
-WEB_LOCATION_ALT=http://www.skynet.ie/~mel/mmtests-archive/apache/
 MIRROR_LOCATION="$WEBROOT/pcre/"
 
 ###SHELLPACK parseargBegin
 ###SHELLPACK parseargEnd
+
+WEB_LOCATION=https://downloads.sourceforge.net/project/pcre/pcre/${VERSION}
+WEB_LOCATION_ALT=https://ftp.exim.org/pub/pcre
 
 # PCRE, use pcre naming to limit extra junk
 ###SHELLPACK sources_fetch pcre-${VERSION}.tar.bz2 pcrebuild-${VERSION}
