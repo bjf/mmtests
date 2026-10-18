@@ -1,5 +1,7 @@
 #!/bin/bash
 ###SHELLPACK preamble metisbuild 5.1.0
+# No verified https source for metis-5.1.0.tar.gz: this URL now redirects
+# through https to an http host, which no longer has the archive.
 WEB_LOCATION="http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis"
 MIRROR_LOCATION="$WEBROOT/metisbuild/"
 
