@@ -1,7 +1,7 @@
 #!/bin/bash
 # Redis installer
 ###SHELLPACK preamble redisbuild-install 6.2.6
-WEB_LOCATION=http://download.redis.io/releases
+WEB_LOCATION=https://download.redis.io/releases
 MIRROR_LOCATION="$WEBROOT/redis/"
 
 ###SHELLPACK parseargBegin
