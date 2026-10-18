@@ -1,22 +1,13 @@
-default-metric: elapsed
+default-metric: nodes_sec
 
 metrics:
-  - user
-  - system
-  - elapsed
+  - nodes_sec
 
 summarise: Multiops
-PlotXaxis: Type Time
-PlotType: operation-candlesticks
+preferhigher: true
+PlotXaxis: Threads
+PlotType: client-errorlines
 
-elapsed:
-  title: Elapsed Time
-  units: TIME_SECONDS
-
-user:
-  title: User CPU Time
-  units: TIME_SECONDS
-
-system:
-  title: System CPU Time
-  units: TIME_SECONDS
+nodes_sec:
+  title: Nodes/second
+  units: OPS_PER_SECOND

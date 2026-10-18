@@ -14,14 +14,41 @@ cd $LOGDIR || exit 1
 # interval:	e.g. time elapsed, iteration etc
 # value:	the benchmark measurement
 # extra:	Optional value, currently used to identify a metric+factor for dashboard comparisons
-for NR_WORKERS in `ls time-*-1 | awk -F - '{print $2}'`; do
-	for ITERATION in `\ls time-$NR_WORKERS-* | cut -f3 -d- | sort -n`; do
-		ENTRY=`cat time-$NR_WORKERS-$ITERATION | $SHELLPACK_BIN/extract-time`
-		USER=`echo $ENTRY | cut -d' ' -f1`
-		SYST=`echo $ENTRY | cut -d' ' -f2`
-		ELSP=`echo $ENTRY | cut -d' ' -f3`
-		echo -e "User\t$NR_WORKERS\t_\t$ITERATION\t$USER\t_"
-		echo -e "System\t$NR_WORKERS\t_\t$ITERATION\t$SYST\t_"
-		echo -e "Elapsed\t$NR_WORKERS\t_\t$ITERATION\t$ELSP\t_"
+#
+# When a search ends, stockfish prints "info nodes N time T" with T in
+# milliseconds. Report nodes per second for each thread count and iteration.
+for NR_THREADS in `\ls stockfish-*-*.gz | awk -F - '{print $2}' | sort -n -u`; do
+	for ITERATION in `\ls stockfish-$NR_THREADS-*.gz | awk -F - '{print $3}' | sed -e 's/\.gz$//' | sort -n`; do
+		FILE=stockfish-$NR_THREADS-$ITERATION.gz
+		LOG=`zcat $FILE`
+		if [ $? -ne 0 ]; then
+			echo "WARNING: $FILE could not be decompressed, skipped" >&2
+			continue
+		fi
+		echo "$LOG" | tr -d '\r' | awk -v file=$FILE -v threads=$NR_THREADS -v iteration=$ITERATION '
+			/^info nodes / {
+				count++
+				summary = $0
+			}
+			END {
+				if (count == 0) {
+					print "WARNING: " file " has no final info nodes line, skipped" > "/dev/stderr"
+					exit
+				}
+				if (count > 1) {
+					print "WARNING: " file " has " count " final info nodes lines, skipped" > "/dev/stderr"
+					exit
+				}
+				if (summary !~ /^info nodes [0-9]+ time [0-9]+[ \t]*$/) {
+					print "WARNING: " file " has a malformed line \"" summary "\", skipped" > "/dev/stderr"
+					exit
+				}
+				split(summary, field, " ")
+				if (field[5] + 0 <= 0) {
+					print "WARNING: " file " reports a search time of " field[5] " ms, skipped" > "/dev/stderr"
+					exit
+				}
+				printf "nodes_sec\t%s\t_\t%s\t%.2f\t_\n", threads, iteration, field[3] * 1000 / field[5]
+			}'
 	done
-done | sort -k1,1 -k2,2n
+done | sort -k1,1 -k2,2n -k4,4n
