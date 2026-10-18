@@ -198,8 +198,23 @@ export SHELLPACK_ADDON=$SCRIPTDIR/shellpack_src/addon
 # Required in get_numa_details when importing config
 install-depends numactl
 
+# Every test in MMTESTS needs a driver. Checked after each import of the
+# configs, so a missing driver stops the run before the tests start.
+check_drivers() {
+	local TEST MISSING=
+	for TEST in $MMTESTS; do
+		if [ ! -e "$SCRIPTDIR/drivers/driver-$TEST.sh" ]; then
+			MISSING="$MISSING $TEST"
+		fi
+	done
+	if [ "$MISSING" != "" ]; then
+		die "No driver script in drivers/ for test(s):$MISSING"
+	fi
+}
+
 # Import MMTests configuration files
 import_configs
+check_drivers
 
 # Create directories that must exist
 cd $SHELLPACK_TOPLEVEL
@@ -287,6 +302,7 @@ if [ "$MMTESTS_LIMIT_CPUS" != "" ]; then
 	NUM_LOGICAL_CPUS=`ls -d /sys/devices/system/cpu/cpu[0-9]* | wc -l`
 	echo Reimporting configs
 	import_configs
+	check_drivers
 fi
 
 # Check monitoring
