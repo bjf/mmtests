@@ -53,6 +53,15 @@ fi
 
 BUFFER_SIZES=`echo $BUFFER_SIZES | sed -e 's/,/ /g'`
 
+# Stop the local netserver however the benchmark exits
+NETPERF_CLEANUP_DONE=no
+netperf_cleanup() {
+	[ "$NETPERF_CLEANUP_DONE" = "yes" ] && return
+	NETPERF_CLEANUP_DONE=yes
+	trap - EXIT
+	killall netserver
+}
+
 export REMOTE_SERVER_SCRIPT=$SCRIPTDIR/shellpacks/shellpack-bench-netperf
 case $SERVERSIDE_COMMAND in
 start)
@@ -85,6 +94,7 @@ none)
 	NETROOT=$SHELLPACK_SOURCES/netperf-${VERSION}-installed 
 	$TASKSET_SERVER $NETROOT/bin/netserver $NET_PROTOCOL_OPT \
 		|| die "Failed to start netserver"
+	trap netperf_cleanup EXIT
 	sleep 2
 	;;
 *)
@@ -167,5 +177,6 @@ mmtests_server_ctl stop --serverside-name $PROTOCOL-$SIZE
 monitor_post_hook $LOGDIR_RESULTS $SIZE
 done
 killall netserver
+trap - EXIT
 
 exit $SHELLPACK_SUCCESS
