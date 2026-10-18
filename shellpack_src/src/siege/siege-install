@@ -28,6 +28,11 @@ if (( `gcc -dumpversion | cut -d. -f1` >= 15 )); then
 	# default flags, which it drops once CFLAGS is set.
 	export CFLAGS="${CFLAGS:--g -O2} -std=gnu17"
 fi
+# siege cancels its browser threads asynchronously when -t expires. One
+# cancelled inside malloc or free can leave an allocator lock held, and
+# siege then hangs until the bench kills it and retries. Cancel them at
+# cancellation points instead, the policy siege adopted in 4.1.4.
+sed -i -e 's/PTHREAD_CANCEL_ASYNCHRONOUS/PTHREAD_CANCEL_DEFERRED/' src/browser.c
 ###SHELLPACK build_configure siege-${VERSION}
 aclocal
 automake
