@@ -6,7 +6,7 @@ APR_VERSION=1.7.0
 PCRE_VERSION=8.43
 PHP_VERSION=7.3.5
 
-WEB_LOCATION=http://ftp.heanet.ie/mirrors/www.apache.org/dist/httpd
+WEB_LOCATION=https://ftp.heanet.ie/mirrors/www.apache.org/dist/httpd
 WEB_LOCATION_ALT=https://archive.apache.org/dist/httpd/
 MIRROR_LOCATION="$WEBROOT/apache/"
 
