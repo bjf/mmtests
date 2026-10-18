@@ -74,6 +74,8 @@ none)
 	IPERFROOT=$SHELLPACK_SOURCES/iperf3-${VERSION}-installed 
 	$TASKSET_SERVER $IPERFROOT/bin/iperf3 -s -D $NET_PROTOCOL_OPT -I /tmp/iperf3.pid \
 		|| die "Failed to start iperf3 server"
+	# Stop the local server however the benchmark exits
+	trap kill_iperf3_server EXIT
 	sleep 2
 	;;
 *)
