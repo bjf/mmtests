@@ -22,6 +22,12 @@ fi
 # Build
 export LDFLAGS=-lrt
 ###SHELLPACK build_start siege-${VERSION}
+if (( `gcc -dumpversion | cut -d. -f1` >= 15 )); then
+	# siege declares functions without parameters, which C23 (the
+	# default from gcc-15) reads as taking none. Keep configure's
+	# default flags, which it drops once CFLAGS is set.
+	export CFLAGS="${CFLAGS:--g -O2} -std=gnu17"
+fi
 ###SHELLPACK build_configure siege-${VERSION}
 aclocal
 automake
