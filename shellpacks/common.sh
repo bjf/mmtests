@@ -1353,9 +1353,23 @@ function create_filesystems
 					;;
 				esac
 			fi
+			# Every iteration formats the disk again, and mkfs.xfs and
+			# mkfs.btrfs refuse to overwrite the filesystem the last
+			# one left unless given -f
+			local MKFS_FORCE= OPT
+			case "$TESTDISK_FILESYSTEM" in
+			xfs|btrfs)
+				MKFS_FORCE="-f"
+				for OPT in $TESTDISK_MKFS_PARAM; do
+					if [ "$OPT" = "-f" ]; then
+						MKFS_FORCE=
+					fi
+				done
+				;;
+			esac
 			for i in ${!TESTDISK_PARTITIONS[*]}; do
 				echo Formatting test disk ${TESTDISK_PARTITIONS[$i]}: $TESTDISK_FILESYSTEM
-				mkfs.$TESTDISK_FILESYSTEM $TESTDISK_MKFS_PARAM \
+				mkfs.$TESTDISK_FILESYSTEM $MKFS_FORCE $TESTDISK_MKFS_PARAM \
 					${TESTDISK_PARTITIONS[$i]} \
 					${TESTDISK_MKFS_PARAM_SUFFIX} || exit
 			done
