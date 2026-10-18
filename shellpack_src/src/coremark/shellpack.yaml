@@ -1,12 +1,13 @@
-default-metric: coremark_score
+default-metric: score
 
 metrics:
-  - coremark_score
+  - score
 
 summarise: Multiops
 preferhigher: true
 PlotXaxis: Score
 PlotType: operation-candlesticks
 
-coremark_score:
+score:
   title: coremark_score
+  units: OPS_SCORE
