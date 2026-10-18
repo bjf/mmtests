@@ -1,6 +1,6 @@
 #!/bin/bash
 ###SHELLPACK preamble gitcheckout-install v6.18
-GIT_LOCATION="git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6"
+GIT_LOCATION="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6"
 MIRROR_LOCATION="$WEBROOT/gitcheckout/"
 
 install-depends git-core
