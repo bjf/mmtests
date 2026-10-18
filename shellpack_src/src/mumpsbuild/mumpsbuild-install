@@ -1,5 +1,7 @@
 #!/bin/bash
 ###SHELLPACK preamble mumpsbuild 5.3.3
+# No verified https source for MUMPS_5.3.3.tar.gz: https probes of this host
+# timed out, and no replacement URL for this archive has been verified.
 WEB_LOCATION="http://mumps.enseeiht.fr"
 MIRROR_LOCATION="$WEBROOT/mumpsbuild/"
 
