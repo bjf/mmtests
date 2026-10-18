@@ -2,7 +2,7 @@
 # apache httpd installer
 ###SHELLPACK preamble apachebuild-install 2.4.39
 
-APR_VERSION=1.7.0
+APR_VERSION=1.7.6
 PCRE_VERSION=8.43
 PHP_VERSION=7.3.5
 
