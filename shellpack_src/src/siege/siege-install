@@ -4,7 +4,7 @@
 
 APACHE_VERSION=2.4.39
 
-WEB_LOCATION=http://download.joedog.org/siege
+WEB_LOCATION=https://download.joedog.org/siege
 
 MIRROR_LOCATION="$WEBROOT/siege/"
 
