@@ -1,6 +1,6 @@
 #!/bin/bash
 ###SHELLPACK preamble atompawbuild-install 4.0.0.13
-WEB_LOCATION="http://users.wfu.edu/natalie/papers/pwpaw"
+WEB_LOCATION="https://users.wfu.edu/natalie/papers/pwpaw"
 MIRROR_LOCATION="$WEBROOT/atompaw/"
 
 ###SHELLPACK parseargBegin
