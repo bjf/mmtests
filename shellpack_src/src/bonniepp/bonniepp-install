@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###SHELLPACK preamble bonniepp-install 1.98
-WEB_LOCATION="http://www.coker.com.au/bonnie++"
+WEB_LOCATION="https://www.coker.com.au/bonnie++"
 WEB_LOCATION="https://www.coker.com.au/bonnie++"
 MIRROR_LOCATION="$WEBROOT/bonnie"
 
