@@ -51,7 +51,7 @@ if [ "$LONG_BIT" = "64" ]; then
 fi
 
 function die() {
-	rm -rf $SHELLPACK_TEMP
+	[ -n "$SHELLPACK_TEMP" ] && rm -rf -- "$SHELLPACK_TEMP"
 	if [ "$P" != "" ]; then
 		TAG=" $P"
 	fi
@@ -382,7 +382,7 @@ function check_status() {
 
 	if [ $EXITCODE != 0 ]; then
 		echo "FATAL: $@"
-		rm -rf $SHELLPACK_TEMP
+		[ -n "$SHELLPACK_TEMP" ] && rm -rf -- "$SHELLPACK_TEMP"
 		exit $SHELLPACK_ERROR
 	fi
 

@@ -22,7 +22,7 @@ INTERRUPT_COUNT=0
 clean_exit()
 {
 	while read file; do
-		[ -n "$file" ] && rm -rf $file
+		[ -n "$file" ] && rm -rf -- "$file"
 	done < $DELETE_ON_EXIT_FILE
 	rm -f $DELETE_ON_EXIT_FILE
 	if [ "$MMTESTS_SESSION_ID" != "" ]; then
@@ -367,7 +367,7 @@ install_tuned
 MMTEST_ITERATIONS=${MMTEST_ITERATIONS:-1}
 export SHELLPACK_LOG_RUNBASE=$SHELLPACK_LOG_BASE/$RUNNAME
 # Delete old runs
-rm -rf $SHELLPACK_LOG_RUNBASE &>/dev/null
+rm -rf -- "${SHELLPACK_LOG_RUNBASE:?}" &>/dev/null
 mkdir -p $SHELLPACK_LOG_RUNBASE
 
 mmtests_wait_token "mmtests_start"

@@ -41,7 +41,7 @@ shift
 
 # Logging parameters
 export LOGDIR_TOPLEVEL=$SHELLPACK_LOG/$NAME$NAMEEXTRA
-rm -rf $SHELLPACK_LOG/$NAME$NAMEEXTRA
+rm -rf -- "${SHELLPACK_LOG:?}/${NAME:?}$NAMEEXTRA"
 mkdir -p $LOGDIR_TOPLEVEL
 cd $LOGDIR_TOPLEVEL
 
@@ -75,7 +75,7 @@ recover_rc
 check_status $NAME "returned failure, unable to continue"
 gzip $LOGDIR_RESULTS/mmtests.log
 
-rm -rf $SHELLPACK_TEMP
+rm -rf -- "${SHELLPACK_TEMP:?}"
 if [ "$2" != "" ]; then
 	rmdir ${SHELLPACK_DATA}
 fi
