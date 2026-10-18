@@ -85,13 +85,16 @@ usage() {
 	echo "-h|--help        Prints this help."
 }
 
-# For `getopt`, which is needed *now*!
-install-depends util-linux
-
-# Parse command-line arguments
+# Parse command-line arguments. getopt comes from util-linux, which is only
+# installed below once the command line is known to be valid.
 ARGS=`getopt -o pmnc:bh --long performance,help,run-monitor,no-monitor,config: \
 			--long build-only,mount-only,no-mount \
 			-n run-mmtests -- "$@"`
+if [ $? -ne 0 ]; then
+	command -v getopt > /dev/null || echo "ERROR: getopt from util-linux is needed to parse the options"
+	usage
+	exit 1
+fi
 declare -a CONFIGS
 export CONFIGS
 eval set -- "$ARGS"
@@ -136,7 +139,7 @@ while true; do
 		*)
 			echo ERROR: Unrecognised option $1
 			usage
-			exit $SHELLPACK_ERROR
+			exit 1
 			;;
 	esac
 done
@@ -149,11 +152,20 @@ fi
 shift
 export RUNNAME=$1
 
+if [ $# -gt 1 ]; then
+	echo "ERROR: Unexpected argument(s) after the runname: ${@:2}"
+	usage
+	exit 1
+fi
+
 if [ -z "$RUNNAME" ]; then
 	echo "ERROR: Runname parameter must be specified"
 	usage
 	exit -1
 fi
+
+# getopt was needed above; install util-linux now the arguments are valid
+install-depends util-linux
 
 # Remove stale bash_arrays file
 rm -f $SCRIPTDIR/bash_arrays
