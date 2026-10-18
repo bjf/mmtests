@@ -35,6 +35,7 @@ if [ -z "$SHELLPACK_LOG" ]; then
 fi
 if [ ! -e $SCRIPTDIR/drivers/driver-$NAME.sh ]; then
 	echo A driver script called driver-$NAME.sh does not exist
+	exit -1
 fi
 shift
 . $SCRIPTDIR/drivers/driver-$NAME.sh
