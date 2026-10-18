@@ -14,8 +14,19 @@
 echo Shutting down apache server...
 $SHELLPACK_INCLUDE/shellpack-bench-apachebuild --stop || die "Failed to shutdown apache http server for restart."
 
+# Stop the apache server however the benchmark exits
+APACHE_CLEANUP_DONE=no
+apache_cleanup() {
+	[ "$APACHE_CLEANUP_DONE" = "yes" ] && return
+	APACHE_CLEANUP_DONE=yes
+	trap - EXIT
+	echo Shutting down apache server...
+	$SHELLPACK_INCLUDE/shellpack-bench-apachebuild --stop
+}
+
 echo Starting apache server...
 $SHELLPACK_INCLUDE/shellpack-bench-apachebuild --start || die "Failed to start apache http server."
+trap apache_cleanup EXIT
 sleep 5
 
 APACHEBENCH_LOADS=500000
