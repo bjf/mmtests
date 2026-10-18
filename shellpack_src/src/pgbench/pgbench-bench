@@ -35,6 +35,15 @@ export LD_LIBRARY_PATH=$SHELLPACK_SOURCES/postgresbuild-${VERSION}-installed/lib
 PSQL="$SHELLPACK_SOURCES/postgresbuild-${VERSION}-installed/bin/psql --host /var/run/postgresql/"
 RUNDBUSER="su -s /bin/bash $DBUSER -c"
 
+# Stop the database if the install-only setup fails after starting it
+INIT_CLEANUP_DONE=no
+init_cleanup() {
+	[ "$INIT_CLEANUP_DONE" = "yes" ] && return
+	INIT_CLEANUP_DONE=yes
+	trap - EXIT
+	$SHELLPACK_INCLUDE/shellpack-bench-postgresbuild --stop
+}
+
 ###SHELLPACK init_only_start
 	log_info "Starting database for first time as part of init"
 	rm -rf $SHELLPACK_SOURCES/postgres*
@@ -43,12 +52,14 @@ RUNDBUSER="su -s /bin/bash $DBUSER -c"
 		--shared_buffers $SHARED_BUFFERS \
 		--work_mem $WORK_MEM \
 		-v ${VERSION} || die "Failed to get a usable postgres installation"
+	trap init_cleanup EXIT
 
 	$RUNDBUSER "$PSQL template1 -c 'CREATE ROLE $ROLE with LOGIN;'" || die "Failed to create $ROLE role"
 	$RUNDBUSER "$PSQL template1 -c 'GRANT ALL PRIVILEGES ON SCHEMA public TO $ROLE;'" || die "Failed to grant privilege to $ROLE role"
 
 	log_info "Stopping database to finish init"
 	$SHELLPACK_INCLUDE/shellpack-bench-postgresbuild --stop
+	trap - EXIT
 
 	log_info "pgbench installed only as requested"
 	exit $SHELLPACK_SUCCESS
@@ -59,7 +70,11 @@ drop() {
 	$RUNDBUSER "$PSQL template1 -c 'DROP ROLE $ROLE;'"
 }
 
+CLEANUP_DONE=no
 cleanup() {
+	[ "$CLEANUP_DONE" = "yes" ] && return
+	CLEANUP_DONE=yes
+	trap - EXIT
 	log_info "Delete database and shutdown."
 	drop
 	$SHELLPACK_INCLUDE/shellpack-bench-postgresbuild --stop
@@ -73,6 +88,8 @@ $SHELLPACK_INCLUDE/shellpack-bench-postgresbuild --start \
 	--shared_buffers $SHARED_BUFFERS \
 	--work_mem $WORK_MEM \
 	-v ${VERSION} || die "Failed to get a usable postgres installation"
+# Drop the database and stop the server however the benchmark exits
+trap cleanup EXIT
 
 log_info "Preparing database"
 $RUNDBUSER "$PSQL template1 -c 'DROP DATABASE pgbench;'"
