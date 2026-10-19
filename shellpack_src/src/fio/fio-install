@@ -1,7 +1,8 @@
 #!/bin/bash
 # fio installer
 ###SHELLPACK preamble fio-install 3.33
-WEB_LOCATION=https://brick.kernel.dk/snaps
+# brick.kernel.dk's certificate has expired; GitHub has the same release tags
+WEB_LOCATION=https://github.com/axboe/fio/archive/refs/tags
 MIRROR_LOCATION="$WEBROOT/fio"
 
 install-depends glibc-devel libaio-devel
@@ -9,7 +10,7 @@ install-depends glibc-devel libaio-devel
 ###SHELLPACK parseargBegin
 ###SHELLPACK parseargEnd
 
-###SHELLPACK sources_fetch fio-${VERSION}.tar.bz2 fio-${VERSION}-installed
+###SHELLPACK sources_fetch fio-${VERSION}.tar.gz fio-${VERSION}-installed
 
 ###SHELLPACK build_start fio-${VERSION}-installed
 make -j$NUM_LOGICAL_CPUS
