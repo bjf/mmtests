@@ -9,7 +9,12 @@ MIRROR_LOCATION="$WEBROOT/simoop/"
 ###SHELLPACK git_fetch simoop-${VERSION}.tar.gz simoop-${VERSION}-installed
 
 ###SHELLPACK build_start simoop-${VERSION}-installed
+# simoop's spin loop uses x86's rep;nop, which does not assemble on arm64
+###SHELLPACK self_extract 0001-simoop-portable-spin-hint.patch
+patch -p1 < $SHELLPACK_TEMP/0001-simoop-portable-spin-hint.patch || die "Failed to apply the portable spin hint patch"
 ###SHELLPACK make
 
 echo simoop installed successfully
 exit $SHELLPACK_SUCCESS
+
+###SHELLPACK include_file 0001-simoop-portable-spin-hint.patch

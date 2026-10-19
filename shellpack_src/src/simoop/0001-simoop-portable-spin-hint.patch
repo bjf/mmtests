@@ -1,0 +1,26 @@
+Subject: [PATCH] simoop: Use a spin-wait hint that builds on arm64
+
+usec_spin() hints the CPU with "rep;nop", which is x86's PAUSE and
+does not assemble anywhere else, so simoop fails to build on arm64.
+Keep it on x86, use "yield" on arm64 (as the kernel's cpu_relax()
+does) and only a compiler barrier elsewhere. The loop still stops on
+wall time, so how long it spins is unchanged.
+---
+diff --git a/simoop.c b/simoop.c
+index 6410ab6..e706d75 100644
+--- a/simoop.c
++++ b/simoop.c
+@@ -884,7 +884,13 @@ struct thread_data {
+ 	struct stats stats[TOTAL_STATS];
+ };
+ 
++#if defined(__x86_64__) || defined(__i386__)
+ #define nop __asm__ __volatile__("rep;nop": : :"memory")
++#elif defined(__aarch64__)
++#define nop __asm__ __volatile__("yield": : :"memory")
++#else
++#define nop __asm__ __volatile__("": : :"memory")
++#endif
+ static void usec_spin(unsigned long spin_time)
+ {
+ 	struct timeval now;
